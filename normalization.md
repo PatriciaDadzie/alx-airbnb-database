@@ -1,112 +1,51 @@
-Step 1: First Normal Form (1NF)
+# Database Normalization - AirBnB
 
-Rule:
+## Objective
 
-Eliminate repeating groups.
+Ensure that the AirBnB-style database schema conforms to the Third Normal Form (3NF).
 
-Ensure each field contains only atomic values.
+---
 
-Application to AirBnB schema:
+## 1. First Normal Form (1NF)
 
-All attributes contain atomic values (e.g., first_name, last_name, email).
+**Rule:** Eliminate repeating groups and ensure atomicity.
 
-No multi-valued attributes (e.g., phone numbers, payment methods).
+- All attributes in the schema hold atomic values.
+- No arrays or multi-valued fields.
 
-Each table has a primary key.
+✅ **Passes 1NF**
 
-✅ The schema satisfies 1NF.
+---
 
-Step 2: Second Normal Form (2NF)
+## 2. Second Normal Form (2NF)
 
-Rule:
+**Rule:** Eliminate partial dependencies.
 
-Must be in 1NF.
+- All tables use single-column primary keys (UUIDs).
+- No attribute depends only on part of a composite key.
 
-Remove partial dependencies (no non-key attribute should depend on part of a composite key).
+✅ **Passes 2NF**
 
-Application:
+---
 
-All tables use single-column primary keys (UUIDs), not composite keys.
+## 3. Third Normal Form (3NF)
 
-Therefore, no partial dependency issues.
+**Rule:** Eliminate transitive dependencies.
 
-✅ The schema satisfies 2NF.
+- All non-key attributes depend only on the primary key.
+- No attribute is dependent on another non-key attribute.
 
-Step 3: Third Normal Form (3NF)
+✅ **Passes 3NF**
 
-Rule:
+---
 
-Must be in 2NF.
+## Optional Consideration
 
-Remove transitive dependencies (non-key attributes should depend only on the key, not on other non-key attributes).
+- **Location** could be normalized into a separate table if locations are reused across properties. Current design keeps it as a simple field for simplicity.
 
-Checks:
+---
 
-User Table
+## Final Verdict
 
-role is independent of other non-key attributes.
+The database schema conforms to **Third Normal Form (3NF)** and is well-structured for production use.
 
-✅ No transitive dependencies.
-
-Property Table
-
-All attributes depend on property_id.
-
-host_id is a foreign key → valid dependency.
-
-✅ No transitive dependencies.
-
-Booking Table
-
-total_price could be considered derived from (pricepernight × nights).
-
-Keeping it stored introduces potential redundancy.
-
-Option 1: Keep it for performance (denormalization).
-
-Option 2: Remove it to strictly enforce 3NF.
-
-⚠️ Suggested: Remove total_price from schema OR mark it as a computed field instead of stored.
-
-Payment Table
-
-All attributes depend only on payment_id.
-
-✅ No issues.
-
-Review Table
-
-rating, comment depend only on review_id.
-
-✅ No issues.
-
-Message Table
-
-message_body, sent_at depend only on message_id.
-
-✅ No issues.
-
-Final Adjustments
-
-Remove total_price from Booking (to strictly comply with 3NF).
-
-Instead, calculate when needed:
-
-total_price = Property.pricepernight × DATEDIFF(end_date, start_date)
-
-
-All other tables are already in 3NF.
-
-Conclusion
-
-The AirBnB database schema is normalized to Third Normal Form (3NF), with only one adjustment recommended:
-
-Remove or compute total_price dynamically in the Booking table to avoid redundancy.
-
-This ensures:
-
-Minimal data redundancy.
-
-Improved consistency.
-
-Clear relationships between entities.
