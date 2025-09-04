@@ -1,5 +1,5 @@
 -- 1. Aggregation with COUNT + GROUP BY
-
+-- Find the total number of bookings made by each user
 SELECT 
     u.id AS user_id,
     u.name AS user_name,
@@ -10,8 +10,8 @@ LEFT JOIN bookings b
 GROUP BY u.id, u.name
 ORDER BY total_bookings DESC;
 
--- 2. Window Function with RANK
-
+-- 2a. Window Function with RANK
+-- Rank properties based on the total number of bookings
 SELECT 
     p.id AS property_id,
     p.name AS property_name,
@@ -22,3 +22,16 @@ LEFT JOIN bookings b
     ON p.id = b.property_id
 GROUP BY p.id, p.name
 ORDER BY booking_rank;
+
+-- 2b. Window Function with ROW_NUMBER
+-- Assign a unique row number to properties ordered by total bookings
+SELECT 
+    p.id AS property_id,
+    p.name AS property_name,
+    COUNT(b.id) AS total_bookings,
+    ROW_NUMBER() OVER (ORDER BY COUNT(b.id) DESC) AS booking_row_number
+FROM properties p
+LEFT JOIN bookings b 
+    ON p.id = b.property_id
+GROUP BY p.id, p.name
+ORDER BY booking_row_number;
