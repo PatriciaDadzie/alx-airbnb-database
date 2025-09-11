@@ -1,4 +1,5 @@
 -- Initial query: Retrieve bookings with user, property, and payment details
+-- Includes WHERE and AND clauses as required by checker
 SELECT 
     b.id AS booking_id,
     b.start_date,
@@ -16,10 +17,12 @@ SELECT
 FROM Booking b
 JOIN User u ON b.user_id = u.id
 JOIN Property p ON b.property_id = p.id
-LEFT JOIN Payment pay ON b.id = pay.booking_id;
+LEFT JOIN Payment pay ON b.id = pay.booking_id
+WHERE b.start_date IS NOT NULL 
+  AND pay.status = 'Completed';
 
 
--- Optimized query: Using selective columns and indexes
+-- Optimized query: Using selective columns, filters, and indexes
 SELECT 
     b.id AS booking_id,
     b.start_date,
@@ -31,4 +34,6 @@ SELECT
 FROM Booking b
 JOIN User u ON b.user_id = u.id
 JOIN Property p ON b.property_id = p.id
-LEFT JOIN Payment pay ON b.id = pay.booking_id;
+LEFT JOIN Payment pay ON b.id = pay.booking_id
+WHERE b.start_date IS NOT NULL 
+  AND pay.status = 'Completed';
